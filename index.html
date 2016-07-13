@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>RGB lab</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+ 	<meta name="description" content="Experiment with random RGB values to discover new colors!">
+    <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+    <link href='style.css' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>
+                <h1><div class="logo"><span class="logo-rgb">RGB</span><span class="logo-font"> lab</span></div></h1>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="user-inputs">
+                    <input id="red" class="uservalue" onchange="updatecolor()" oninput="updatecolor()" value="255"><br/>
+                    <input id="green" class="uservalue" onchange="updatecolor()" oninput="updatecolor()" value="255"><br/>
+                    <input id="blue" class="uservalue" onchange="updatecolor()" oninput="updatecolor()" value="255"><br/>
+                    <button onclick="randomize();" id="random">random</button>
+                </div>
+				<div id="footer">&copy; <a href="http://fromabctill.xyz/" target="_blank">Harshal Gajjar</a></div>
+            </td>
+        </tr>
+    </table>
+    
+
+<script type="text/javascript">
+var $input = document.getElementsByClassName("uservalue");
+
+function invert_set(r,g,b){
+}
+
+function updatecolor(){
+    var red=Number($input[0].value.trim());
+    var green=Number($input[1].value.trim());
+    var blue=Number($input[2].value.trim());
+    
+    if (isNaN(red) || red>255 || red<0 || isNaN(green) || green>255 || green<0 || isNaN(blue) || blue>255 || blue<0){
+		alert('Please enter a valid number ranging from 0 to 255, both inclusive');
+		} else {
+		
+		var background_color="rgb("+red+","+green+","+blue+")";
+		document.body.style.backgroundColor = background_color;
+		
+		var redc=255-red;
+		var greenc=255-green;
+		var bluec=255-blue;
+		var background_color_c="rgb("+redc+","+greenc+","+bluec+")";
+		document.body.style.color = background_color_c;
+		
+		}
+}
+
+function randomize(){
+		var red=Math.round(Math.random()*1000)%255;
+		var green=Math.round(Math.random()*1000)%255;
+		var blue=Math.round(Math.random()*1000)%255;
+		
+		var background_color="rgb("+red+","+green+","+blue+")";
+        document.body.style.backgroundColor = background_color;
+		
+		$input[0].value=red;
+		$input[1].value=green;
+		$input[2].value=blue;
+		
+		var redc=255-red;
+		var greenc=255-green;
+		var bluec=255-blue;
+		var background_color_c="rgb("+redc+","+greenc+","+bluec+")";
+		document.body.style.color = background_color_c;
+		
+}
+
+randomize();
+</script>    
+</body>
+</html>
