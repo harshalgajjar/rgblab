@@ -8,23 +8,35 @@
     <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
     <link href='style.css' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+	
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <body>
-    <table>
+    <table >
         <tr>
             <td>
-                <h1><div class="logo"><span class="logo-rgb">RGB</span><span class="logo-font"> lab</span></div></h1>
+                <h1><div class="logo"><span class="logo-rgb">RGB</span><span class="logo-font"> lab</span> </div></h1>
             </td>
         </tr>
         <tr>
             <td>
                 <div id="user-inputs">
-                    <input id="red" class="uservalue" onchange="updatecolor()" oninput="updatecolor()" value="255"><br/>
-                    <input id="green" class="uservalue" onchange="updatecolor()" oninput="updatecolor()" value="255"><br/>
-                    <input id="blue" class="uservalue" onchange="updatecolor()" oninput="updatecolor()" value="255"><br/>
-                    <button onclick="randomize();" id="random">random</button>
+					<table>
+						<tr>
+							<td>
+								<input id="red" class="uservalue" onchange="updatecolor()" oninput="updatecolor()" value="255"> <span id="red_percent"></span><br/>
+								<input id="green" class="uservalue" onchange="updatecolor()" oninput="updatecolor()" value="255"> <span id="green_percent"></span><br/>
+								<input id="blue" class="uservalue" onchange="updatecolor()" oninput="updatecolor()" value="255"> <span id="blue_percent"></span><br/><br/>
+								<button onclick="randomize();" id="random">random</button>
+							</td>
+							<td>
+								<canvas id="pie" height=100 width=100></canvas><br /><br /><br />
+							</td>
+						</tr>
+					</table>
+                    
                 </div>
-				<div id="footer">&copy; <a href="http://fromabctill.xyz/" target="_blank">Harshal Gajjar</a></div>
+				<div id="footer">&copy; <a href="http://fromabctill.xyz/" target="_blank">Harshal Gajjar</a></div><span id="git"><a href="http://github.com/harshalgajjar/rgblab" target="_blank"><img src="http://fromabctill.xyz/social/git.png"/></a></span>
             </td>
         </tr>
     </table>
@@ -32,52 +44,105 @@
 
 <script type="text/javascript">
 var $input = document.getElementsByClassName("uservalue");
+var red,green,blue,redc,greenc,bluec,sum,red_p,green_p,blue_p=0;
+var background_color_c;
 
-function invert_set(r,g,b){
+function show_percent(){
+		sum=red+green+blue;
+		if(sum === 0){
+			red_p=0;
+			green_p=0;
+			blue_p=0;
+		} else{
+			red_p=red*100/sum;
+			green_p=green*100/sum;
+			blue_p=blue*100/sum;
+		}
+		document.getElementById("red_percent").innerText=red_p.toFixed(1)+"%";
+		document.getElementById("green_percent").innerText=green_p.toFixed(1)+"%";
+		document.getElementById("blue_percent").innerText=blue_p.toFixed(1)+"%";
+	
 }
 
 function updatecolor(){
-    var red=Number($input[0].value.trim());
-    var green=Number($input[1].value.trim());
-    var blue=Number($input[2].value.trim());
+     red=Number($input[0].value.trim());
+     green=Number($input[1].value.trim());
+     blue=Number($input[2].value.trim());
     
     if (isNaN(red) || red>255 || red<0 || isNaN(green) || green>255 || green<0 || isNaN(blue) || blue>255 || blue<0){
 		alert('Please enter a valid number ranging from 0 to 255, both inclusive');
 		} else {
 		
-		var background_color="rgb("+red+","+green+","+blue+")";
+		background_color="rgba("+red+","+green+","+blue+",1)";
 		document.body.style.backgroundColor = background_color;
-		
-		var redc=255-red;
-		var greenc=255-green;
-		var bluec=255-blue;
-		var background_color_c="rgb("+redc+","+greenc+","+bluec+")";
-		document.body.style.color = background_color_c;
-		
+		invert_set();
+		show_percent();
+		createpie();
 		}
 }
 
 function randomize(){
-		var red=Math.round(Math.random()*1000)%255;
-		var green=Math.round(Math.random()*1000)%255;
-		var blue=Math.round(Math.random()*1000)%255;
+		 red=Math.round(Math.random()*1000)%255;
+		 green=Math.round(Math.random()*1000)%255;
+		 blue=Math.round(Math.random()*1000)%255;
 		
-		var background_color="rgb("+red+","+green+","+blue+")";
+		 background_color="rgba("+red+","+green+","+blue+",1)";
         document.body.style.backgroundColor = background_color;
 		
 		$input[0].value=red;
 		$input[1].value=green;
 		$input[2].value=blue;
-		
-		var redc=255-red;
-		var greenc=255-green;
-		var bluec=255-blue;
-		var background_color_c="rgb("+redc+","+greenc+","+bluec+")";
+		invert_set();
+		show_percent();
+		createpie();
+}
+
+function invert_set(){
+		 redc=255-red;
+		 greenc=255-green;
+		 bluec=255-blue;
+		 background_color_c="rgba("+redc+","+greenc+","+bluec+",1)";
 		document.body.style.color = background_color_c;
-		
+	
+}
+
+function createpie(){
+    var canvas=document.getElementById("pie");
+	
+	if(sum !== 0){
+    var context=canvas.getContext("2d");
+	
+    context.beginPath();
+    context.fillStyle="rgba(255,0,0,1)";
+	context.arc(50,50,49,0,red_p*2*Math.PI/100);
+    context.lineTo(50,50);
+    context.fill();
+	
+	context.beginPath();
+	context.fillStyle="rgba(0,255,0,1)";
+	context.arc(50,50,49,red_p*2*Math.PI/100,red_p*2*Math.PI/100+green_p*2*Math.PI/100);
+    context.lineTo(50,50);
+    context.fill();
+	
+	context.beginPath();
+	context.fillStyle="rgba(0,0,255,1)";
+	context.arc(50,50,49,red_p*2*Math.PI/100+green_p*2*Math.PI/100,red_p*2*Math.PI/100+green_p*2*Math.PI/100+blue_p*2*Math.PI/100);
+	context.lineTo(50,50);
+	context.fill();
+	
+	context.beginPath();
+	
+	context.strokeStyle=background_color_c;
+	context.arc(50,50,49,0,2*Math.PI);
+	context.stroke();
+	
+	}else{
+		canvas.style.visibility="hidden";
+	}
 }
 
 randomize();
-</script>    
+
+</script>
 </body>
 </html>
