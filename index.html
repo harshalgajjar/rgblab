@@ -8,42 +8,37 @@
     <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
     <link href='style.css' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
 <body>
-    <table >
-        <tr>
-            <td>
-                <h1><div class="logo"><span class="logo-rgb">RGB</span><span class="logo-font"> lab</span> </div></h1>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <div id="user-inputs">
-					<table>
-						<tr>
-							<td>
-								<input id="red" class="uservalue" onchange="updatecolor()" oninput="updatecolor()" value="255"> <span id="red_percent"></span><br/>
-								<input id="green" class="uservalue" onchange="updatecolor()" oninput="updatecolor()" value="255"> <span id="green_percent"></span><br/>
-								<input id="blue" class="uservalue" onchange="updatecolor()" oninput="updatecolor()" value="255"> <span id="blue_percent"></span><br/><br/>
-								<button onclick="randomize();" id="random">random</button>
-							</td>
-							<td>
-								<canvas id="pie" height=100 width=100></canvas><br /><br /><br />
-							</td>
-						</tr>
-					</table>
-                    
-                </div>
-				<div id="footer">&copy; <a href="http://fromabctill.xyz/" target="_blank">Harshal Gajjar</a></div><span id="git"><a href="http://github.com/harshalgajjar/rgblab" target="_blank"><img src="http://fromabctill.xyz/social/git.png"/></a></span>
-            </td>
-        </tr>
-    </table>
-    
+	
+<h1><div class="logo"><span class="logo-rgb">RGB</span><span class="logo-font"> lab</span> </div></h1>
+
+<div id="user-inputs" class="container-fluid">
+	<div class="row">
+		<div class="col-sm-2">
+				<input id="red" class="uservalue" onchange="updatecolor()" oninput="updatecolor()" value="255"> <span class="percent_display" id="red_percent"></span><br /><br /><input type="range" max=255 min=0 value=255 step=1 oninput="updatecolorslider();" id="red_slider" class="color_slider"><br/>
+				<input id="green" class="uservalue" onchange="updatecolor()" oninput="updatecolor()" value="255"> <span class="percent_display" id="green_percent"></span><br /><br /><input type="range" max=255 min=0 value=255 step=1 oninput="updatecolorslider();" id="green_slider" class="color_slider"><br/>
+				<input id="blue" class="uservalue" onchange="updatecolor()" oninput="updatecolor()" value="255"> <span class="percent_display" id="blue_percent"></span><br /><br /><input type="range" max=255 min=0 value=255 step=1 oninput="updatecolorslider();" id="blue_slider" class="color_slider"><br/>
+				<button onclick="randomize();" id="random_button">random</button><br /><br />
+		</div>
+		<div class="col-sm-2">
+				<canvas id="pie" height=100 width=100></canvas><br /><br /><br />
+		</div>
+	</div>
+</div>
+
+<div id="right_bar">aa</div>
+<div id="right_bar_left_hex">aa</div>
+
+<div id="footer"><small>Simple Javascript project <br />by </small><a href="http://fromabctill.xyz/" target="_blank">Harshal Gajjar</a></div><span id="git"><a href="http://github.com/harshalgajjar/rgblab" target="_blank"><img src="http://fromabctill.xyz/social/git.png"/></a></span>
 
 <script type="text/javascript">
 var $input = document.getElementsByClassName("uservalue");
-var red,green,blue,redc,greenc,bluec,sum,red_p,green_p,blue_p=0;
+var red,green,blue,redc,greenc,bluec,sum,red_p,green_p,blue_p,red_hex,green_hex,blue_hex=0;
 var background_color_c;
+var $input_slider = document.getElementsByClassName("color_slider");
 
 function show_percent(){
 		sum=red+green+blue;
@@ -62,11 +57,29 @@ function show_percent(){
 	
 }
 
+function updatecolorslider(){
+     red=Number($input_slider[0].value);
+     green=Number($input_slider[1].value);
+     blue=Number($input_slider[2].value);
+	 
+	 background_color="rgba("+red+","+green+","+blue+",1)";
+	 document.body.style.backgroundColor = background_color;
+	 invert_set();
+	 show_percent();
+	 createpie();
+	 update_hex(red,green,blue,"right_bar");
+	 
+	 $input[0].value=red;
+	 $input[1].value=green;
+	 $input[2].value=blue;
+	 
+}
+
 function updatecolor(){
      red=Number($input[0].value.trim());
      green=Number($input[1].value.trim());
      blue=Number($input[2].value.trim());
-    
+	 
     if (isNaN(red) || red>255 || red<0 || isNaN(green) || green>255 || green<0 || isNaN(blue) || blue>255 || blue<0){
 		alert('Please enter a valid number ranging from 0 to 255, both inclusive');
 		} else {
@@ -76,6 +89,12 @@ function updatecolor(){
 		invert_set();
 		show_percent();
 		createpie();
+		update_hex(red,green,blue,"right_bar");
+		
+		$input_slider[0].value=red;
+		$input_slider[1].value=green;
+		$input_slider[2].value=blue;
+		
 		}
 }
 
@@ -83,7 +102,7 @@ function randomize(){
 		 red=Math.round(Math.random()*1000)%255;
 		 green=Math.round(Math.random()*1000)%255;
 		 blue=Math.round(Math.random()*1000)%255;
-		
+		 
 		 background_color="rgba("+red+","+green+","+blue+",1)";
         document.body.style.backgroundColor = background_color;
 		
@@ -93,6 +112,11 @@ function randomize(){
 		invert_set();
 		show_percent();
 		createpie();
+		update_hex(red,green,blue,"right_bar");
+		
+		$input_slider[0].value=red;
+		$input_slider[1].value=green;
+		$input_slider[2].value=blue;
 }
 
 function invert_set(){
@@ -101,14 +125,44 @@ function invert_set(){
 		 bluec=255-blue;
 		 background_color_c="rgba("+redc+","+greenc+","+bluec+",1)";
 		document.body.style.color = background_color_c;
+		
+		document.getElementById("right_bar").style.background=background_color_c;
+		document.getElementById("right_bar").style.color=background_color;
+		
+		document.getElementById("right_bar_left_hex").style.background=background_color;
+		document.getElementById("right_bar_left_hex").style.color=background_color_c;
+		
+		update_hex(redc,greenc,bluec,"right_bar_left_hex");
+}
+
+function update_hex(r,g,b,element){
+	var red_hex=r.toString(16);
+	var green_hex=g.toString(16);
+	var blue_hex=b.toString(16);
 	
+	if(red_hex.length == 1){
+		red_hex="0"+red_hex;
+	}
+	
+	if(green_hex.length == 1){
+		green_hex="0"+green_hex;
+	}
+	
+	if(blue_hex.length == 1){
+		blue_hex="0"+blue_hex;
+	}
+	
+	document.getElementById(element).innerText="#"+red_hex+green_hex+blue_hex;
 }
 
 function createpie(){
     var canvas=document.getElementById("pie");
 	
 	if(sum !== 0){
-    var context=canvas.getContext("2d");
+		canvas.style.visibility="visible";
+	var context=canvas.getContext("2d");
+	
+	context.clearRect(0,0,100,100);
 	
     context.beginPath();
     context.fillStyle="rgba(255,0,0,1)";
@@ -128,12 +182,6 @@ function createpie(){
 	context.lineTo(50,50);
 	context.fill();
 	
-	context.beginPath();
-	
-	context.strokeStyle=background_color_c;
-	context.arc(50,50,49,0,2*Math.PI);
-	context.stroke();
-	
 	}else{
 		canvas.style.visibility="hidden";
 	}
@@ -142,5 +190,19 @@ function createpie(){
 randomize();
 
 </script>
+
+<div id="stats">
+<!-- Begin Web-Stat code v 6.2 -->
+<div id="wts1236774">&nbsp;</div><script type="text/javascript">
+var wts=document.createElement('script');wts.type='text/javascript';
+wts.async=true;wts.src=('https:'==document.location.protocol?'https://server2':'http://lb')
++'.web-stat.com/2/1236774/log6_2.js';
+document.getElementById('wts1236774').appendChild(wts);
+</script><noscript><div><a href="http://www.web-stat.com">
+<img src="//server2.web-stat.com/6/2/1236774.gif"
+style="border:0px;" alt=""/></a></div></noscript>
+<!-- End Web-Stat code v 6.2 -->
+</div>
+
 </body>
 </html>
